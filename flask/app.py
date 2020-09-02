@@ -19,7 +19,6 @@ def read_configmap(config, section):
             exit(1)
     return dict1
 
-
 def get_conn_str():
     config = configparser.ConfigParser()
     config.read('./config.ini')
@@ -68,7 +67,7 @@ with t as
  where node_type = 'performer'
  group by node_name
  order by count(*) desc
- limit 25)
+ limit 20)
 select jsonb_agg(jsonb_build_object('name',name,'count',count))
   from t;
 	'''

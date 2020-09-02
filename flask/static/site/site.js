@@ -7,8 +7,8 @@ var margin = {
         right: 5,
         bottom:5,
         left: 5},
-    barwidth  = 250 - margin.left - margin.right,
-    barheight = 500 - margin.top - margin.bottom,
+    barwidth  = 200 - margin.left - margin.right,
+    barheight = 400 - margin.top - margin.bottom,
     width  = 1200 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom,
     radius = 5;
@@ -24,7 +24,7 @@ var tdiv = d3.select("body").append("div")
 //
 // bar chart
 //
-/*
+
 var x = d3.scaleLinear().range([0,barwidth]);
 var y = d3.scaleBand().range([0,barheight]).padding(0.1);
 
@@ -33,7 +33,7 @@ var barsvg = d3.select("#d3bar").append("svg")
     .attr("height", barheight + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+/*
 barsvg.append("rect")
     .attr("x",0)
     .attr("y",0)
@@ -42,7 +42,7 @@ barsvg.append("rect")
     .attr("stroke-width", "1")
     .attr("fill", "none")
     .attr("stroke", "black");
-
+*/
 d3.json("/get_bar").then(function(data) {
     console.log(data)
 
@@ -70,41 +70,6 @@ d3.json("/get_bar").then(function(data) {
         .text(function(d) { return d.name })
         .attr("fill", "white");
 });
-
-*/
-
-//
-// Force simulation
-//
-
-var gsvg = d3.select("#d3force").append("svg")
-    .attr("width",  width )  //+ margin.left + margin.right)
-    .attr("height", height ) //+ margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var container = gsvg.append("g");
-
-gsvg.call(d3.zoom()
-    .scaleExtent([.1, 4])
-    .on("zoom", function() {
-        container.attr("transform", d3.event.transform);
-    })
-);
-
-/*
-gsvg.append("rect")
-    .attr("width",width)
-    .attr("height",height)
-    .attr("stroke-width", "4")
-    .attr("fill", "none")
-    .attr("stroke", "black");
-*/
-var sim = d3.forceSimulation()
-    //.force("collision", d3.forceCollide().radius(function(d) { return d.radius; }))
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
-    .force("charge", d3.forceManyBody().strength(-5))
-    .force("center", d3.forceCenter(width/2, height/2));
 
 
 // Circle styling //
