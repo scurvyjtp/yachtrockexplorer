@@ -1,4 +1,3 @@
-
 //
 // Global Vars
 //
@@ -13,10 +12,7 @@ var margin = {
     height = 800 - margin.top - margin.bottom,
     radius = 5;
 
-//
 // Tooltip div
-//
-
 var tdiv = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity",0);
@@ -33,16 +29,7 @@ var barsvg = d3.select("#d3bar").append("svg")
     .attr("height", barheight + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-/*
-barsvg.append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",barwidth)
-    .attr("height",barheight)
-    .attr("stroke-width", "1")
-    .attr("fill", "none")
-    .attr("stroke", "black");
-*/
+
 d3.json("/get_bar").then(function(data) {
     console.log(data)
 
@@ -90,7 +77,6 @@ function circleRadius(d) {
 }
 
 // Drag events //
-
 function dragstarted(d) {
     if(!d3.event.active) sim.alphaTarget(0.3).restart();
     d.fx = d.x;
@@ -131,11 +117,24 @@ d3.select("#redraw")
     });
 
 function redrawData(name,degree) {
-    url = "/get_by_name/" + name + "/" + degree;
+    degree = typeof message !== 'undefined' ? degree : 2;
+
+    if (name == 'all') {
+        url = '/get_network';
+        //url = 'get_full_network';
+    } else {
+        url = "/get_by_name/" + name + "/" + degree;
+    }
     console.log(url)
 
     //clear the div
     d3.select("#d3force").selectAll("*").remove();
+
+    var sim = d3.forceSimulation()
+        //.force("collision", d3.forceCollide().radius(function(d) { return d.radius; }))
+        .force("link", d3.forceLink().id(function(d) { return d.id; }))
+        .force("charge", d3.forceManyBody().strength(-5))
+        .force("center", d3.forceCenter(width/2, height/2));
 
     // initialize the div
     var gsvg = d3.select("#d3force").append("svg")
@@ -154,13 +153,6 @@ function redrawData(name,degree) {
             container.attr("transform", d3.event.transform);
         })
     );
-
-    // create teh simulation
-    var sim = d3.forceSimulation()
-        //.force("collision", d3.forceCollide().radius(function(d) { return d.radius; }))
-        .force("link", d3.forceLink().id(function(d) { return d.id; }))
-        .force("charge", d3.forceManyBody().strength(-5))
-        .force("center", d3.forceCenter(width/2, height/2));
 
     // populate the simulation based on the data
     //d3.json("/get_by_name").then(function(data) {
@@ -228,5 +220,9 @@ function redrawData(name,degree) {
     });
 }
 
+// initial load
 
+document.addEventListener("DOMContentLoaded", function(event) { 
+    redrawData('all')
+});
 

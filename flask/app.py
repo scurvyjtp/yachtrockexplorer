@@ -57,55 +57,19 @@ def index():
 
 @app.route('/get_bar')
 def get_bar():
-	query = '''
-with t as
-(select node_name as name,
-       count(*)as count
-  from nodes n
-  join node_map nm
-    on n.id = nm.source
- where node_type = 'performer'
- group by node_name
- order by count(*) desc
- limit 20)
-select jsonb_agg(jsonb_build_object('name',name,'count',count))
-  from t;
-	'''
+	query = 'select yre_gettopx(20)';
 	r = exec_query(query)
 	return json.dumps(r[0][0])
 
 @app.route('/get_network')
 def get_network():
-    query = '''
-with map as (
-select nm.id,
-       nm.source,
-       a.node_name as source_name,
-       a.node_type as source_group,
-       nm.target,
-       b.node_name as target_name,
-       b.node_type as target_group,
-       nm.cost
-  from (select * from pgr_kruskal('select id, source, target, cost from node_map order by id') ) pgrk
-  join node_map nm
-    on pgrk.edge = nm.id
-  join nodes a
-    on nm.source = a.id
-  join nodes b
-    on nm.target = b.id
-),
-links as  (
-    select json_agg(jsonb_build_object('source',source_name,'target',target_name, 'value', cost)) as ln
-      from map
-),
-nodes as (
-    select json_agg(jsonb_build_object('id', name, 'group', grp)) nn from (
-        select distinct source_name as name, source_group as grp from map
-        UNION ALL
-        select  distinct target_name as name, target_group as grp from map) foo
-)
-select jsonb_build_object('links', ln, 'nodes', nn) from links,nodes
-    '''
+    query = 'select yre_get_minimal_network()'
+    r = exec_query(query)
+    return json.dumps(r[0][0])
+
+@app.route('/get_full_network')
+def get_full_network():
+    query = 'select yre_get_full_network()'
     r = exec_query(query)
     return json.dumps(r[0][0])
 
