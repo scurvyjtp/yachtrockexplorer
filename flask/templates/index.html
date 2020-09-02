@@ -19,21 +19,21 @@
         <div class="row"> <!-- style="border:1px solid black"-->
             <div id="d3bar" class="col-md-2 h-100">
                 <h3>Controls</h3>
-                <div id="controls" class= "h-100">
-                    Search
+                <div id="controls" class="controls" style="padding: 2px; border: 4px solid black">
+
                     <div id="search" class="w-100">
-                        <input id="autosearch" type="text" name="name" placeholder="Kenny Loggins">
+                        <h4>Search</h4>
+                        <input id="autosearch" type="text" name="name" value="Kenny Loggins">
+                        <input id="degreeslider" type="range" min="1" max="6" value="2" step="1">
+                        <div id="redraw" class="input-button">Redraw</div>
                     </div>
-
-                    <div id="label-toggle">
-                    Toggle Labels
-
+                    <br /><div> <h4>Labels</h4>
+                    <div id="label-toggle" class="input-button">Toggle Labels</div>
                     </div>
-
                 </div>
 
             </div>
-            <div id="d3force" class="col-md-6 h-100"></div>
+            <div id="d3force" class="col-md-10 h-100"></div>
         </div>
     </div>
 

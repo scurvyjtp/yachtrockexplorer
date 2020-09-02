@@ -5,7 +5,6 @@ from flask import render_template, send_from_directory
 import psycopg2,json
 import configparser
 
-
 app = Flask(__name__)
 
 ## read_configmap: import data from config.ini
@@ -40,10 +39,11 @@ def get_cursor():
         return
     return curs
 
-def exec_query(query):
+def exec_query(query,params=()):
     print(query)
     curs = get_cursor()
-    curs.execute(query)
+    curs.execute('set search_path to yacht,public')
+    curs.execute(query,params)
     r = curs.fetchall()
     curs.close()
     return r
@@ -110,40 +110,11 @@ select jsonb_build_object('links', ln, 'nodes', nn) from links,nodes
     r = exec_query(query)
     return json.dumps(r[0][0])
 
-@app.route('/get_mcdonald')
-def get_mcdonald():
-    query = '''
-with map as (
-select nm.id,
-       nm.source,
-       a.node_name as source_name,
-       a.node_type as source_group,
-       nm.target,
-       b.node_name as target_name,
-       b.node_type as target_group,
-       nm.cost
-  from (select * from pgr_drivingdistance('select id, target as source, source as target, 1 as cost from node_map', 2344, 3)) pgrk
-  join node_map nm
-    on pgrk.edge = nm.id
-  join nodes a
-    on nm.source = a.id
-  join nodes b
-    on nm.target = b.id
-),
-links as  (
-    select json_agg(jsonb_build_object('source',source_name,'target',target_name, 'value', cost)) as ln
-      from map
-),
-nodes as (
-    select json_agg(jsonb_build_object('id', name, 'group', grp)) nn from (
-        select distinct * from (
-        select source_name as name, source_group as grp from map
-        UNION ALL
-        select  target_name as name, target_group as grp from map) bar ) foo
-)
-select jsonb_build_object('links', ln, 'nodes', nn) from links,nodes
-'''
-    r = exec_query(query)
+@app.route('/get_by_name/<node_name>/<int:degrees>')
+def get_by_name(node_name,degrees):
+    query = 'select yre_get_force_json_by_name(%s, %s)'
+    params = (node_name, degrees)
+    r = exec_query(query, params)
     return json.dumps(r[0][0])
 
 if __name__ == '__main__':
