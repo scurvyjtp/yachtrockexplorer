@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Yacht Rock Explorer</title>
+
+        <link href="{{ url_for('static', filename='bs/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='site/site.css') }}" rel="stylesheet">
+        <script src="{{ url_for('static', filename='d3/d3.js') }}"></script>
+        <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+    </head>
+
+    <body>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Yacht Rock Explorer</h1>
+        </div>
+    </div>
+
+    <div id="d3svg" class="container-fluid"><!--style="border: 1px solid black"-->
+        <div class="row"> <!-- style="border:1px solid black"-->
+            <div id="d3bar" class="col-md-2 h-100">
+                <h3>Controls</h3>
+                <div id="controls" class= "h-100">
+                    Search
+                    <div id="search" class="w-100">
+                        <input id="autosearch" type="text" name="name" placeholder="Kenny Loggins">
+                    </div>
+
+                    <div id="label-toggle">
+                    Toggle Labels
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div id="d3force" class="col-md-6 h-100"></div>
+        </div>
+    </div>
+
+    </body>
+</html>
+
+<script src="{{ url_for('static', filename='site/site.js') }}"></script>
+
+<!-- <input id="label-toggle" type="button" value="Toggle Labels"> -->

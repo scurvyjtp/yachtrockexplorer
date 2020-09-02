@@ -1,6 +1,6 @@
-config.ini/
-__pycache/
-flask/static/d3/
-flask/static/bs/
+config.ini
+__pycache__/
+d3/
+bs/
 .*
 !.gitignore
