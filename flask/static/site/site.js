@@ -116,8 +116,15 @@ d3.select("#redraw")
         redrawData(name,degree);
     });
 
+var sim = d3.forceSimulation()
+        //.force("collision", d3.forceCollide().radius(function(d) { return d.radius; }))
+        .force("link", d3.forceLink().id(function(d) { return d.id; }))
+        .force("charge", d3.forceManyBody().strength(-5))
+        .force("center", d3.forceCenter(width/2, height/2));
+
+
 function redrawData(name,degree) {
-    degree = typeof message !== 'undefined' ? degree : 2;
+    //degree = typeof message !== 'undefined' ? 2: degree;
 
     if (name == 'all') {
         url = '/get_network';
@@ -129,12 +136,6 @@ function redrawData(name,degree) {
 
     //clear the div
     d3.select("#d3force").selectAll("*").remove();
-
-    var sim = d3.forceSimulation()
-        //.force("collision", d3.forceCollide().radius(function(d) { return d.radius; }))
-        .force("link", d3.forceLink().id(function(d) { return d.id; }))
-        .force("charge", d3.forceManyBody().strength(-5))
-        .force("center", d3.forceCenter(width/2, height/2));
 
     // initialize the div
     var gsvg = d3.select("#d3force").append("svg")
@@ -190,7 +191,7 @@ function redrawData(name,degree) {
                 .on("end", dragended))
             .on("mouseover", function(d) {
                     tdiv.transition().duration(50)
-                    .style("opacity", .9)
+                    .style("opacity", 1)
                     tdiv.html("<p>" + d.id + "</p")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
@@ -203,6 +204,7 @@ function redrawData(name,degree) {
         node.append("title")
             .text(function(d) { return d.id; });
 
+        sim.alphaTarget(0.3).restart();
         sim.nodes(data.nodes).on("tick",ticked);
         sim.force("link").links(data.links);
 
@@ -223,6 +225,6 @@ function redrawData(name,degree) {
 // initial load
 
 document.addEventListener("DOMContentLoaded", function(event) { 
-    redrawData('all')
+    //redrawData('all')
+    redrawData('Ray Parker Jr.',1)
 });
-

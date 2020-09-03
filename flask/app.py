@@ -57,7 +57,7 @@ def index():
 
 @app.route('/get_bar')
 def get_bar():
-	query = 'select yre_gettopx(20)';
+	query = 'select yre_get_topx(20)';
 	r = exec_query(query)
 	return json.dumps(r[0][0])
 

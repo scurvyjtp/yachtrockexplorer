@@ -24,7 +24,7 @@ select nm.id,
        b.node_name as target_name,
        b.node_type as target_group,
        nm.cost
-  from (select * from pgr_drivingdistance('select id, target as source, source as target, 1 as cost from node_map'::text,
+  from (select * from pgr_drivingdistance('select id, source, target, 1 as cost from node_map'::text,
             (select id from nodes where node_name = name_in), degrees_in)) pgrk
   join node_map nm
     on pgrk.edge = nm.id
@@ -68,7 +68,7 @@ RETURN
        count(*)as count
   from nodes n
   join node_map nm
-    on n.id = nm.source
+    on n.id = nm.target
  where node_type = 'performer'
  group by node_name
  order by count(*) desc

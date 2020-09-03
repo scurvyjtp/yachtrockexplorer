@@ -21,17 +21,17 @@
 div.tooltip {
     position: absolute;
     text-align: center;
-    width: 120px;
+    width: 200px;
     height: 40px;
     padding: 4px;
-    font: 10px sans-serif;
-    background: lightsteelblue;
-    border: 0px;
+    font: 11px sans-serif;
+    background: white;
+    border: 1px solid black;
     border-radius: 8px;
     pointer-events: none;
 }
 
-p {
+.tooltip  {
     top: 50%
 }
 
@@ -53,12 +53,10 @@ input {
     width: 90%;
 }
 
-
 #search {
     width: 100%;
     font: 12px sans-serif bold;
 }
-
 
 .input-button {
     width: 90%;
@@ -70,4 +68,3 @@ input {
     text-align: center;
     background-color: lightgrey;
 }
-
