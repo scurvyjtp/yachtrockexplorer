@@ -113,7 +113,17 @@ d3.select("#redraw")
     .on("click", function() {
         name = document.getElementById("autosearch").value;
         degree = document.getElementById("degreeslider").value;
-        redrawData(name,degree);
+        url = "/get_by_name/" + name + "/" + degree
+        redrawData(url)
+    });
+
+d3.select("#drawmap")
+    .on("click", function() {
+        map_source = document.getElementById("map_source").value;
+        map_target = document.getElementById("map_target").value;
+        url = "/get_direct_map/" + map_source+ "/" + map_target 
+        redrawData(url)
+        //alert(map_source + " " + map_target);
     });
 
 var sim = d3.forceSimulation()
@@ -123,15 +133,7 @@ var sim = d3.forceSimulation()
         .force("center", d3.forceCenter(width/2, height/2));
 
 
-function redrawData(name,degree) {
-    //degree = typeof message !== 'undefined' ? 2: degree;
-
-    if (name == 'all') {
-        url = '/get_network';
-        //url = 'get_full_network';
-    } else {
-        url = "/get_by_name/" + name + "/" + degree;
-    }
+function redrawData(url) {
     console.log(url)
 
     //clear the div
@@ -223,8 +225,7 @@ function redrawData(name,degree) {
 }
 
 // initial load
-
-document.addEventListener("DOMContentLoaded", function(event) { 
-    //redrawData('all')
-    redrawData('Ray Parker Jr.',1)
+document.addEventListener("DOMContentLoaded", function(event) {
+    //redrawData('/get_network')
+    redrawData('/get_by_name/Ray Parker Jr./1')
 });

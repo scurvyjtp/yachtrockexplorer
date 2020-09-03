@@ -78,8 +78,6 @@ select jsonb_agg(jsonb_build_object('name',name,'count',count))
 
 END;
 $_$ LANGUAGE 'plpgsql';
-
-
 -- yre_get_minimal_network()
 --
 --  Returns a jsonb of the minimal spanning forest of all nodes 
@@ -147,6 +145,87 @@ select nm.id,
        b.node_type as target_group,
        nm.cost
   from node_map nm
+  join nodes a
+    on nm.source = a.id
+  join nodes b
+    on nm.target = b.id
+),
+links as  (
+    select json_agg(jsonb_build_object('source',source_name,'target',target_name, 'value', cost)) as ln
+      from map
+),
+nodes as (
+    select json_agg(jsonb_build_object('id', name, 'group', grp)) nn from (
+        select distinct * from (
+        select distinct source_name as name, source_group as grp from map
+        UNION ALL
+        select  distinct target_name as name, target_group as grp from map) bar ) foo
+)
+select jsonb_build_object('links', ln, 'nodes', nn) from links,nodes);
+
+END;
+$_$ LANGUAGE 'plpgsql';
+
+-- yre_get_complete_step(IN text, OUT text, OUT int, OUT int)
+--
+--  Returns a single record of how many hops to get
+--  to a complete graph, and how bit that is.
+
+
+CREATE OR REPLACE FUNCTION
+    yre_get_complete_step(IN name_in text, OUT name text, OUT hop int, OUT nodes int)
+AS $_$
+DECLARE
+    hop_c         integer := 1;
+    old_nodes   integer := 0;
+BEGIN
+
+
+LOOP
+    select name_in, hop_c, count(*)
+      INTO name, hop, nodes
+      from pgr_drivingdistance('select id, source, target, 1 as cost from node_map'::text,
+            (select id from nodes where node_name = name_in), hop_c);
+
+    IF nodes = old_nodes THEN
+        hop = hop - 1;
+        EXIT;
+    ELSE
+        hop_c := hop_c + 1;
+        old_nodes := nodes;
+    END IF;
+END LOOP;
+
+END;
+$_$ LANGUAGE 'plpgsql';
+
+
+-- yre_get_direct_map(text,text)
+--
+--  Returns a single record of how many hops to get
+--  to a complete graph, and how bit that is.
+
+CREATE OR REPLACE FUNCTION
+    yre_get_direct_map(source_name_in text, target_name_in text)
+    returns jsonb as $_$
+BEGIN
+
+RETURN
+(with map as (
+select nm.id,
+       nm.source,
+       a.node_name as source_name,
+       a.node_type as source_group,
+       nm.target,
+       b.node_name as target_name,
+       b.node_type as target_group,
+       nm.cost
+  from (select *
+          from pgr_dijkstra('select id, source, target, cost from node_map',
+                (select id from nodes where node_name = source_name_in),
+                (select id from nodes where node_name = target_name_in))) pd
+  join node_map nm
+    on pd.edge = nm.id
   join nodes a
     on nm.source = a.id
   join nodes b

@@ -80,5 +80,12 @@ def get_by_name(node_name,degrees):
     r = exec_query(query, params)
     return json.dumps(r[0][0])
 
+@app.route('/get_direct_map/<source>/<target>')
+def get_direct_map(source,target):
+    query = 'select yre_get_direct_map(%s,%s)'
+    params = (source,target)
+    r = exec_query(query,params)
+    return json.dumps(r[0][0])
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
