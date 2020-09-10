@@ -229,3 +229,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //redrawData('/get_network')
     redrawData('/get_by_name/Ray Parker Jr./1')
 });
+
+// Help / User Guide
+
+d3.select("#help-toggle")
+    .on("click", function() {
+
+    e = d3.select('#d3force').node().getBoundingClientRect();
+    d3.select("#d3force")
+        .append("div")
+        .attr("id", "help-text")
+        .style("width", e.width - 100)
+        .style("height", e.height - 100)
+        .style("top", 50)
+        .style("left",50)
+        .html('hi');
+    });

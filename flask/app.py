@@ -47,9 +47,18 @@ def exec_query(query,params=()):
     curs.close()
     return r
 
+
+########################################
+##   Raw HTML maps                    ##
+########################################
+
 @app.route('/')
 def index():
     return render_template("index.html")
+
+@app.route('/help')
+def get_help():
+    return render_template("help.html")
 
 ########################################
 ##   Postgres API                     ##
