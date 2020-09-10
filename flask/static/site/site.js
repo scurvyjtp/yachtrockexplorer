@@ -228,20 +228,31 @@ function redrawData(url) {
 document.addEventListener("DOMContentLoaded", function(event) {
     //redrawData('/get_network')
     redrawData('/get_by_name/Ray Parker Jr./1')
+    loadHelp();
 });
 
 // Help / User Guide
+function loadHelp() {
+    var ht = d3.select("#help-text");
+    if (ht.empty()) {
+
+        e = d3.select("#d3force").node().getBoundingClientRect();
+        d3.text("/help",).then(function(data) {
+            //console.log(data);
+            d3.select("#d3force")
+                .append("div")
+                .attr("id", "help-text")
+                .style("width", e.width - 100)
+                .style("height", e.height - 100)
+                .style("top", 50)
+                .style("left",50)
+                .html(data)
+                .on("click", function() {
+                    d3.select(this).remove();
+                }); // end div on click
+        }); // end d3.text
+    }
+}
 
 d3.select("#help-toggle")
-    .on("click", function() {
-
-    e = d3.select('#d3force').node().getBoundingClientRect();
-    d3.select("#d3force")
-        .append("div")
-        .attr("id", "help-text")
-        .style("width", e.width - 100)
-        .style("height", e.height - 100)
-        .style("top", 50)
-        .style("left",50)
-        .html('hi');
-    });
+    .on("click", function() {loadHelp();});
